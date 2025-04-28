@@ -7,12 +7,12 @@ import (
 
 type User struct {
 	Id       int64  `gorm:"column:id;primary_key;AUTO_INCREMENT" json:"id"`
-	Name     string `gorm:"column:name" json:"name"`
-	IcoUrl   string `gorm:"column:ico_url" json:"ico_url"`
-	Account  string `gorm:"column:account" json:"account"`
-	Password string `gorm:"column:password" json:"password"`
-	Follower string `gorm:"column:follower" json:"follower"`
-	Followed string `gorm:"column:followed" json:"followed"`
+	Name     string `gorm:"column:name;type:varchar(255)" json:"name"`
+	IcoUrl   string `gorm:"column:ico_url;type:varchar(255)" json:"ico_url"`
+	Account  string `gorm:"column:account;type:varchar(255)" json:"account"`
+	Password string `gorm:"column:password;type:varchar(255)" json:"password"`
+	Follower int64  `gorm:"column:follower" json:"follower"`
+	Followed int64  `gorm:"column:followed" json:"followed"`
 }
 
 type UserDao struct{}

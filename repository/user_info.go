@@ -6,6 +6,7 @@ type UserInfo struct {
 	IcoUrl   string `json:"ico_url"`
 	Follower string `json:"follower"`
 	Followed string `json:"followed"`
+	IsFollow bool   `json:"is_follow"`
 }
 
 func (UserInfo) TableName() string {
@@ -15,5 +16,10 @@ func (UserInfo) TableName() string {
 func QueryById(id int64) *UserInfo {
 	var user UserInfo
 	db.First(&user, id)
+	err := db.First(Follow{Uid: id}).Error
+	if err != nil {
+		user.IsFollow = false
+	}
+	user.IsFollow = true
 	return &user
 }

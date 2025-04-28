@@ -45,6 +45,8 @@ func (f *RegisterFlow) Register() (int64, error) {
 		Name:     f.name,
 		Account:  f.account,
 		Password: hashedPassword,
+		Followed: 0,
+		Follower: 0,
 	}
 	//fmt.Printf("用户已初始化")
 	if err := repository.NewUserDao().Save(user); err != nil {

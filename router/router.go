@@ -15,6 +15,8 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	blogRoutes := r.Group("/blog")
 	blogRoutes.POST("/upload", middleware.AutoMiddleware(), controller.UploadBlog)
 
+	r.POST("/follow/:lid", middleware.AutoMiddleware(), controller.Follow)
+	r.POST("/unfollow/:lid", middleware.AutoMiddleware(), controller.UnFollow)
 	/*r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"msg": "pong"})
 	})*/
