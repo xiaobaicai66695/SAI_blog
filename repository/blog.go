@@ -87,7 +87,7 @@ func (PushToFollower) ConsumeClaim(sess sarama.ConsumerGroupSession, claim saram
 		fmt.Printf("准备推送消息了\n")
 		json.Unmarshal(msg.Value, &blog)
 		var uid = blog.UID
-		var relationships []Relaationship
+		var relationships []Relationship
 		//根据作者的uid找出粉丝的id
 		//fid是关注的人 uid是自己
 		//要找自己是哪一些人所关注的人即条件是fid=作者的uid

@@ -1,16 +1,18 @@
 package repository
 
-type Relaationship struct {
+import "gorm.io/gorm"
+
+type Relationship struct {
 	Uid int64 `gorm:"uid" json:"uid"`
 	Fid int64 `gorm:"fid" json:"fid"`
 }
 
-func (Relaationship) TableName() string {
+func (Relationship) TableName() string {
 	return "relationship"
 }
 
-func SaveRelation(uid int64, fid int64) error {
-	err := db.Create(&Relaationship{
+func SaveRelation(tx *gorm.DB, uid int64, fid int64) error {
+	err := tx.Create(&Relationship{
 		Uid: uid,
 		Fid: fid,
 	}).Error
@@ -21,7 +23,7 @@ func SaveRelation(uid int64, fid int64) error {
 }
 
 func DeleteRelation(uid int64, fid int64) error {
-	err := db.Where("uid = ? AND fid = ?", uid, fid).Delete(&Relaationship{}).Error
+	err := db.Where("uid = ? AND fid = ?", uid, fid).Delete(&Relationship{}).Error
 	if err != nil {
 		return err
 	}
@@ -30,7 +32,7 @@ func DeleteRelation(uid int64, fid int64) error {
 
 func IsRelationExist(uid int64, fid int64) (bool, error) {
 	var count int64
-	err := db.Model(&Relaationship{}).Where("uid = ? AND fid = ?", uid, fid).Count(&count).Error
+	err := db.Model(&Relationship{}).Where("uid = ? AND fid = ?", uid, fid).Count(&count).Error
 	if err != nil {
 		return false, err
 	}

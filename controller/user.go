@@ -70,7 +70,7 @@ func Login(c *gin.Context) {
 func UserInfo(c *gin.Context) {
 	idStr := c.Param("id")
 	id, _ := strconv.ParseInt(idStr, 10, 64)
-	userInfo := repository.QueryById(id)
+	userInfo := repository.QueryUserInfoById(id)
 	c.JSON(http.StatusOK, UserInfoResponse{
 		Response: Response{
 			StatusCode: 1,

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"gorm.io/gorm"
 	"sync"
 )
 
@@ -43,4 +44,18 @@ func (*UserDao) Save(user *User) error {
 		return err
 	}
 	return nil
+}
+
+func UpdateUser(tx *gorm.DB, user *User) error {
+	tx.Where("id = ?", user.Id).Updates(user)
+	return nil
+}
+
+func QueryUserById(id int64) (*User, error) {
+	var user User
+	err := db.Where("id = ?", id).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
