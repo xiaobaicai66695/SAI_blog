@@ -16,7 +16,7 @@ func (UserInfo) TableName() string {
 func QueryById(id int64) *UserInfo {
 	var user UserInfo
 	db.First(&user, id)
-	err := db.First(Follow{Uid: id}).Error
+	err := db.First(Relaationship{Uid: id}).Error
 	if err != nil {
 		user.IsFollow = false
 	}

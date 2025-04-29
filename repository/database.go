@@ -13,7 +13,7 @@ func InitDB() error {
 	if db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{}); err != nil {
 		return err
 	}
-	err = db.AutoMigrate(&User{}, &Blog{}, &BlogComment{}, &BlogLikes{}, &Follow{})
+	err = db.AutoMigrate(&User{}, &Blog{}, &BlogComment{}, &BlogLikes{}, &Relaationship{}, &FollowBlog{})
 	if err != nil {
 		panic(err)
 	}

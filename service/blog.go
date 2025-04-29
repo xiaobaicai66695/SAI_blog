@@ -83,12 +83,15 @@ func UploadBlog(blog *repository.Blog) error {
 	blog.BlogId = blogId
 	go sendBlogUploadMessage(blog)
 
-	go func() {
-		err = repository.SaveBlogFromKafka()
-	}()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+	//go func() {
+	//	err = repository.ConsumeBlogFromKafka("save-blog", blogUploadTopic, repository.BlogConsumerGroupHandler{})
+	//}()
+	//go func() {
+	//	err = repository.ConsumeBlogFromKafka("push-follower-blog", blogUploadTopic, repository.PushToFollower{})
+	//}()
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return err
+	//}
 	return nil
 }
