@@ -95,7 +95,7 @@ func (PushToFollower) ConsumeClaim(sess sarama.ConsumerGroupSession, claim saram
 		//为每个查出来的粉丝推送
 		for _, relationship := range relationships {
 			var followBlog = &FollowBlog{
-				Fid:    relationship.Uid,
+				Uid:    relationship.Uid,
 				BlogId: blog.BlogId,
 			}
 			db.Create(followBlog)

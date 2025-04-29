@@ -17,6 +17,7 @@ func Follow(uid int64, fid int64) error {
 		return fmt.Errorf("已关注")
 	}
 	err = repository.SaveRelation(uid, fid)
+	repository.AddFollowBlog(uid, fid)
 	if err != nil {
 		return fmt.Errorf("关注失败")
 	}
@@ -32,6 +33,7 @@ func UnFollow(uid int64, fid int64) error {
 		return fmt.Errorf("未关注")
 	}
 	err = repository.DeleteRelation(uid, fid)
+	repository.DelFollowBlog(uid, fid)
 	if err != nil {
 		return fmt.Errorf("取关失败")
 	}
