@@ -98,19 +98,10 @@ func BlogInfoById(blogId int64) *BlogInfo {
 		return nil
 	}
 	blog := repository.QueryBlogById(blogId)
-	comments := repository.QueryCommentsById(blogId)
 	if blog == nil {
 		return nil
 	}
-	blogInfo := &BlogInfo{
-		BlogId:   blog.BlogId,
-		UID:      blog.UID,
-		Title:    blog.Title,
-		Content:  blog.Content,
-		Comments: blog.Comments,
-		Likes:    blog.Likes,
-		Comment:  comments,
-	}
+	blogInfo := packingBlogToBlogInfo(blog)
 	return blogInfo
 }
 
@@ -128,17 +119,36 @@ func QueryFollowBlogList(uid int64, page int) []BlogInfo {
 			continue
 		}
 
-		comments := repository.QueryCommentsById(blog.BlogId)
-		blogInfo := &BlogInfo{
-			BlogId:   blog.BlogId,
-			UID:      blog.UID,
-			Title:    blog.Title,
-			Content:  blog.Content,
-			Comments: blog.Comments,
-			Likes:    blog.Likes,
-			Comment:  comments,
-		}
+		blogInfo := packingBlogToBlogInfo(blog)
 		blogInfos = append(blogInfos, *blogInfo)
 	}
 	return blogInfos
+}
+
+func QueryBlogListWithKey(key string, page int) []BlogInfo {
+	offset := (page - 1) * 10
+	blogs := repository.QueryBlogByKey(key, offset)
+	var blogInfos []BlogInfo
+	for _, blog := range blogs {
+		if blog.BlogId == 0 {
+			continue
+		}
+		blogInfo := packingBlogToBlogInfo(blog)
+		blogInfos = append(blogInfos, *blogInfo)
+	}
+	return blogInfos
+}
+
+func packingBlogToBlogInfo(blog *repository.Blog) *BlogInfo {
+	comments := repository.QueryCommentsById(blog.BlogId)
+	blogInfo := &BlogInfo{
+		BlogId:   blog.BlogId,
+		UID:      blog.UID,
+		Title:    blog.Title,
+		Content:  blog.Content,
+		Comments: blog.Comments,
+		Likes:    blog.Likes,
+		Comment:  comments,
+	}
+	return blogInfo
 }

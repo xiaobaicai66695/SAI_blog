@@ -158,6 +158,12 @@ func QueryBlogWithIds(blogIds []int64, offset int) []*Blog {
 	return blogs
 }
 
+func QueryBlogByKey(key string, offset int) []*Blog {
+	var blogs []*Blog
+	db.Where("title like ?", "%"+key+"%").Offset(offset).Limit(10).Order("comments * 0.7 + likes * 0.3 desc").Find(&blogs)
+	return blogs
+}
+
 //	func SaveBlogFromKafka() error {
 //		config := sarama.NewConfig()
 //		config.Consumer.Return.Errors = true

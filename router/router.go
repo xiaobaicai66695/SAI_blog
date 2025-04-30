@@ -16,9 +16,12 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	blogRoutes.POST("/upload", middleware.AutoMiddleware(), controller.UploadBlog)
 	blogRoutes.GET("/:blogID", controller.BlogInfo)
 	blogRoutes.GET("/list/follow", middleware.AutoMiddleware(), controller.FollowBlogList)
+	blogRoutes.GET("/list", controller.BlogWithKey)
 
 	r.POST("/follow/:lid", middleware.AutoMiddleware(), controller.Follow)
-	r.DELETE("/unfollow/:lid", middleware.AutoMiddleware(), controller.UnFollow)
+	r.DELETE("/follow/:lid", middleware.AutoMiddleware(), controller.UnFollow)
+	r.POST("like/:lid", middleware.AutoMiddleware(), controller.Like)
+	r.DELETE("like/:lid", middleware.AutoMiddleware(), controller.UnLike)
 	/*r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"msg": "pong"})
 	})*/

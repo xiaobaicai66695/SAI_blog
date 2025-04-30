@@ -110,3 +110,23 @@ func FollowBlogList(c *gin.Context) {
 		Blogs: blogInfos,
 	})
 }
+
+func BlogWithKey(c *gin.Context) {
+	key := c.Query("key")
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  "获取查询参数失败",
+		})
+		return
+	}
+	blogs := service.QueryBlogListWithKey(key, page)
+	c.JSON(http.StatusOK, BlogListResponse{
+		Response: Response{
+			StatusCode: 1,
+			StatusMsg:  "查询成功",
+		},
+		Blogs: blogs,
+	})
+}
