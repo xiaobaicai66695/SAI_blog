@@ -5,11 +5,17 @@ import (
 	"SAI_blog/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
-type BlogResponse struct {
+type UploadBlogResponse struct {
 	Response
 	*repository.Blog
+}
+
+type BlogInfoResponse struct {
+	Response
+	*service.BlogInfo
 }
 
 func UploadBlog(c *gin.Context) {
@@ -41,11 +47,27 @@ func UploadBlog(c *gin.Context) {
 	}
 	blog.Likes = 0
 	blog.Comments = 0
-	c.JSON(http.StatusOK, BlogResponse{
+	c.JSON(http.StatusOK, UploadBlogResponse{
 		Response: Response{
 			StatusCode: 1,
 			StatusMsg:  "上传成功",
 		},
 		Blog: &blog,
+	})
+}
+
+func BlogInfo(c *gin.Context) {
+	blogIdStr := c.Param("blogID")
+	blogId, err := strconv.ParseInt(blogIdStr, 10, 64)
+	if err != nil {
+		return
+	}
+	blogInfo := service.BlogInfoById(blogId)
+	c.JSON(http.StatusOK, BlogInfoResponse{
+		Response: Response{
+			StatusCode: 1,
+			StatusMsg:  "查询成功",
+		},
+		BlogInfo: blogInfo,
 	})
 }

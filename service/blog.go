@@ -11,15 +11,13 @@ import (
 )
 
 type BlogInfo struct {
-	BlogId   int64  `gorm:"column:blog_id;primary_key" json:"blog_id"`
-	UID      int64  `gorm:"column:uid" json:"uid"`
-	Title    string `gorm:"column:title" json:"title"`
-	Content  string `gorm:"column:content;type:longtext" json:"content"`
-	Likes    int64  `gorm:"column:likes" json:"likes"`
-	Comments int64  `gorm:"column:comments" json:"comments"`
-	Lid      int64  `gorm:"column:lid" json:"lid"`
-	Comment  string `gorm:"column:comment;type:text" json:"comment"`
-	Cid      int64  `gorm:"column:cid" json:"cid"`
+	BlogId   int64                    `gorm:"column:blog_id;primary_key" json:"blog_id"`
+	UID      int64                    `gorm:"column:uid" json:"uid"`
+	Title    string                   `gorm:"column:title" json:"title"`
+	Content  string                   `gorm:"column:content;type:longtext" json:"content"`
+	Likes    int64                    `gorm:"column:likes" json:"likes"`
+	Comments int64                    `gorm:"column:comments" json:"comments"`
+	Comment  []repository.BlogComment `gorm:"-" json:"comment"`
 }
 
 // 用消息队列要发送的消息
@@ -94,4 +92,22 @@ func UploadBlog(blog *repository.Blog) error {
 	//	return err
 	//}
 	return nil
+}
+func BlogInfoById(blogId int64) *BlogInfo {
+	if blogId == 0 {
+		return nil
+	}
+	blog := repository.QueryBlogById(blogId)
+	comments := repository.QueryCommentsById(blogId)
+
+	blogInfo := &BlogInfo{
+		BlogId:   blog.BlogId,
+		UID:      blog.UID,
+		Title:    blog.Title,
+		Content:  blog.Content,
+		Comments: blog.Comments,
+		Likes:    blog.Likes,
+		Comment:  comments,
+	}
+	return blogInfo
 }

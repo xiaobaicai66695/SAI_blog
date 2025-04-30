@@ -130,6 +130,11 @@ func ConsumeBlogFromKafka(groupID string, topic string, handler sarama.ConsumerG
 	}
 }
 
+func QueryBlogById(blogId int64) *Blog {
+	db.Find(&blog, "blog_id = ?", blogId)
+	return blog
+}
+
 //	func SaveBlogFromKafka() error {
 //		config := sarama.NewConfig()
 //		config.Consumer.Return.Errors = true
