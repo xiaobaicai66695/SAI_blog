@@ -68,6 +68,13 @@ func BlogInfo(c *gin.Context) {
 		return
 	}
 	blogInfo := service.BlogInfoById(blogId)
+	if blogInfo == nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  "没有这篇博客",
+		})
+		return
+	}
 	c.JSON(http.StatusOK, BlogInfoResponse{
 		Response: Response{
 			StatusCode: 1,

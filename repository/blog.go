@@ -131,7 +131,24 @@ func ConsumeBlogFromKafka(groupID string, topic string, handler sarama.ConsumerG
 }
 
 func QueryBlogById(blogId int64) *Blog {
+	key := fmt.Sprintf("%s%d", keyPrefix, blogId)
+	val, err := rdb1.Get(ctx, key).Result()
+	if err == nil {
+		if val != "" {
+			_ = json.Unmarshal([]byte(val), &blog)
+			return blog
+		} else {
+			return nil
+		}
+	}
+
 	db.Find(&blog, "blog_id = ?", blogId)
+	if blog.BlogId == 0 {
+		rdb1.Set(ctx, key, "", time.Hour*10)
+		return nil
+	}
+	blogJson, _ := json.Marshal(blog)
+	rdb1.Set(ctx, key, blogJson, time.Hour*10)
 	return blog
 }
 

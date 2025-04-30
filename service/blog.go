@@ -99,7 +99,9 @@ func BlogInfoById(blogId int64) *BlogInfo {
 	}
 	blog := repository.QueryBlogById(blogId)
 	comments := repository.QueryCommentsById(blogId)
-
+	if blog == nil {
+		return nil
+	}
 	blogInfo := &BlogInfo{
 		BlogId:   blog.BlogId,
 		UID:      blog.UID,
