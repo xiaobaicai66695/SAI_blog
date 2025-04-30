@@ -9,7 +9,7 @@ func AutoMiddleware() gin.HandlerFunc {
 			return
 		}
 		_, claims, err := ParseToken(tokenString)
-		if err != nil {
+		if err != nil || claims.UserId == 0 {
 			return
 		}
 		c.Set("uid", claims.UserId)

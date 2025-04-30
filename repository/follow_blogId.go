@@ -32,3 +32,9 @@ func DelFollowBlog(tx *gorm.DB, fid int64) {
 		tx.Where("blog_id = ?", b.BlogId).Delete(&FollowBlog{})
 	}
 }
+
+func QueryBlogIdByUid(uid int64) []FollowBlog {
+	var blogs []FollowBlog
+	db.Where("uid = ?", uid).Find(&blogs)
+	return blogs
+}

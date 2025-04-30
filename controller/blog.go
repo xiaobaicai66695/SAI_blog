@@ -18,6 +18,11 @@ type BlogInfoResponse struct {
 	*service.BlogInfo
 }
 
+type BlogListResponse struct {
+	Response
+	Blogs []service.BlogInfo
+}
+
 func UploadBlog(c *gin.Context) {
 	uid, ok := c.Get("uid")
 	if !ok || uid == nil {
@@ -69,5 +74,32 @@ func BlogInfo(c *gin.Context) {
 			StatusMsg:  "查询成功",
 		},
 		BlogInfo: blogInfo,
+	})
+}
+
+func FollowBlogList(c *gin.Context) {
+	uid, ok := c.Get("uid")
+	if !ok || uid == nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  "请先登录",
+		})
+		return
+	}
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  "获取参数失败",
+		})
+		return
+	}
+	blogInfos := service.QueryFollowBlogList(uid.(int64), page)
+	c.JSON(http.StatusOK, BlogListResponse{
+		Response: Response{
+			StatusCode: 1,
+			StatusMsg:  "查询成功",
+		},
+		Blogs: blogInfos,
 	})
 }

@@ -111,3 +111,32 @@ func BlogInfoById(blogId int64) *BlogInfo {
 	}
 	return blogInfo
 }
+
+func QueryFollowBlogList(uid int64, page int) []BlogInfo {
+	offset := (page - 1) * 10
+	followBlogIds := repository.QueryBlogIdByUid(uid)
+	var blogInfos []BlogInfo
+	var ids []int64
+	for _, blogId := range followBlogIds {
+		ids = append(ids, blogId.BlogId)
+	}
+	blogs := repository.QueryBlogWithIds(ids, offset)
+	for _, blog := range blogs {
+		if blog.BlogId == 0 {
+			continue
+		}
+
+		comments := repository.QueryCommentsById(blog.BlogId)
+		blogInfo := &BlogInfo{
+			BlogId:   blog.BlogId,
+			UID:      blog.UID,
+			Title:    blog.Title,
+			Content:  blog.Content,
+			Comments: blog.Comments,
+			Likes:    blog.Likes,
+			Comment:  comments,
+		}
+		blogInfos = append(blogInfos, *blogInfo)
+	}
+	return blogInfos
+}

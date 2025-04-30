@@ -47,7 +47,7 @@ func (*UserDao) Save(user *User) error {
 }
 
 func UpdateUser(tx *gorm.DB, user *User) error {
-	tx.Where("id = ?", user.Id).Updates(user)
+	tx.Where("id = ?", user.Id).Save(user)
 	return nil
 }
 
