@@ -5,6 +5,7 @@ import (
 	"SAI_blog/router"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"time"
 )
 
 func main() {
@@ -26,7 +27,16 @@ func main() {
 			panic("粉丝推送博客失败:" + err.Error())
 		}
 	}()
+	go func() {
+		ticker := time.NewTicker(1 * time.Second)
+		defer ticker.Stop()
+		for {
+			<-ticker.C
+			repository.UpdateLikeFromRedis()
+		}
+	}()
 	r := gin.Default()
 	r = router.InitRouter(r)
 	panic(r.Run(":8081"))
+
 }
