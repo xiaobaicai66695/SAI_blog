@@ -5,6 +5,7 @@ import (
 	"SAI_blog/router"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"time"
 )
 
 func main() {
@@ -24,6 +25,14 @@ func main() {
 		err := repository.ConsumeBlogFromKafka("push-follower-blog", "blog", repository.PushToFollower{})
 		if err != nil {
 			panic("粉丝推送博客失败:" + err.Error())
+		}
+	}()
+	go func() {
+		ticker := time.NewTicker(1 * time.Second)
+		defer ticker.Stop()
+		for {
+			<-ticker.C
+			repository.UpdateLikeFromRedis()
 		}
 	}()
 	r := gin.Default()
