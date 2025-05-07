@@ -22,8 +22,8 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	r.DELETE("/follow/:lid", middleware.AutoMiddleware(), controller.UnFollow)
 	r.POST("like/:blogId", middleware.AutoMiddleware(), controller.Like)
 	r.DELETE("like/:blogId", middleware.AutoMiddleware(), controller.UnLike)
-	/*r.GET("/ping", func(c *gin.Context) {
+	r.GET("ip", func(c *gin.Context) {
 		c.JSON(200, gin.H{"msg": "pong"})
-	})*/
+	})
 	return r
 }

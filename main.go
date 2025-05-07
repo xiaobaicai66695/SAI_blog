@@ -3,6 +3,7 @@ package main
 import (
 	"SAI_blog/repository"
 	"SAI_blog/router"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"time"
@@ -37,6 +38,6 @@ func main() {
 	}()
 	r := gin.Default()
 	r = router.InitRouter(r)
-	panic(r.Run(":8081"))
-
+	r.Use(cors.Default())
+	panic(r.Run("0.0.0.0:8081"))
 }
