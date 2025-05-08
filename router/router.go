@@ -22,9 +22,7 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	r.DELETE("/follow/:lid", middleware.AutoMiddleware(), controller.UnFollow)
 	r.POST("like/:lid", middleware.AutoMiddleware(), controller.Like)
 	r.DELETE("like/:lid", middleware.AutoMiddleware(), controller.UnLike)
-
-	//r.GET("/ws",)
-
+	r.GET("/ws", middleware.AutoMiddleware(), controller.WsHandler)
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"msg": "pong"})
 	})

@@ -13,6 +13,7 @@ import (
 type BlogInfo struct {
 	BlogId   int64                    `gorm:"column:blog_id;primary_key" json:"blog_id"`
 	UID      int64                    `gorm:"column:uid" json:"uid"`
+	UserName string                   `gorm:"column:user_name" json:"user_name"`
 	Title    string                   `gorm:"column:title" json:"title"`
 	Content  string                   `gorm:"column:content;type:longtext" json:"content"`
 	Likes    int64                    `gorm:"column:likes" json:"likes"`
@@ -141,9 +142,12 @@ func QueryBlogListWithKey(key string, page int) []BlogInfo {
 
 func packingBlogToBlogInfo(blog *repository.Blog) *BlogInfo {
 	comments := repository.QueryCommentsById(blog.BlogId)
+	user, _ := repository.QueryUserById(blog.UID)
+	userName := user.Name
 	blogInfo := &BlogInfo{
 		BlogId:   blog.BlogId,
 		UID:      blog.UID,
+		UserName: userName,
 		Title:    blog.Title,
 		Content:  blog.Content,
 		Comments: blog.Comments,
