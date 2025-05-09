@@ -30,6 +30,8 @@ func HandlerChatConnection(w http.ResponseWriter, r *http.Request, groupId int64
 	groupConnsMux.Lock()
 	if groupConns[groupId] == nil {
 		groupConns[groupId] = make(map[int64]*websocket.Conn)
+	} else if oldConn, ok := groupConns[groupId][uid]; ok {
+		oldConn.Close()
 	}
 	groupConns[groupId][uid] = conn
 	groupConnsMux.Unlock()
@@ -61,8 +63,7 @@ func broadcastMessage(msg *repository.Group, groupId int64) error {
 	if err != nil {
 		return fmt.Errorf("获取群组成员失败；%v", err)
 	}
-	uids = append(uids, 6, 7)
-
+	//uids = append(uids, 6, 7)
 	for _, uid := range uids {
 		if userConns, ok := groupConns[groupId]; ok {
 			if conn, ok := userConns[uid]; ok {
@@ -70,7 +71,8 @@ func broadcastMessage(msg *repository.Group, groupId int64) error {
 				if err = conn.WriteMessage(websocket.TextMessage, msgBytes); err != nil {
 					fmt.Printf("用户(uid = %d)发送失败，准备删除连接\n", uid)
 					conn.Close()
-					delete(userConns, uid)
+					//delete(userConns, uid)
+					removeConnection(groupId, uid)
 				}
 			} else {
 				//写入未读消息列表
@@ -81,7 +83,11 @@ func broadcastMessage(msg *repository.Group, groupId int64) error {
 }
 
 func heartbeat(conn *websocket.Conn) {
-	ticker := time.NewTicker(5 * time.Second)
+	conn.SetPongHandler(func(string2 string) error {
+		conn.SetReadDeadline(time.Now().Add(time.Second * 60))
+		return nil
+	})
+	ticker := time.NewTicker(60 * time.Second)
 	defer ticker.Stop()
 	for range ticker.C {
 		if err := conn.WriteMessage(websocket.PingMessage, []byte("ping")); err != nil {
@@ -96,6 +102,9 @@ func removeConnection(groupId int64, uid int64) {
 	defer groupConnsMux.Unlock()
 	if conns, ok := groupConns[groupId]; ok {
 		delete(conns, uid)
+		if len(conns) == 0 {
+			delete(groupConns, groupId)
+		}
 	}
 }
 
