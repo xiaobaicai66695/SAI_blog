@@ -164,6 +164,12 @@ func QueryBlogByKey(key string, offset int) []*Blog {
 	return blogs
 }
 
+func BlogTotalCount() int64 {
+	var count int64
+	db.Model(&Blog{}).Count(&count)
+	return count
+}
+
 //	func SaveBlogFromKafka() error {
 //		config := sarama.NewConfig()
 //		config.Consumer.Return.Errors = true

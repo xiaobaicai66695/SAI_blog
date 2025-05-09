@@ -17,6 +17,8 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	blogRoutes.GET("/:blogID", controller.BlogInfo)
 	blogRoutes.GET("/list/follow", middleware.AutoMiddleware(), controller.FollowBlogList)
 	blogRoutes.GET("/list", controller.BlogWithKey)
+	blogRoutes.GET("/count", controller.BlogTotalCount)
+	blogRoutes.POST("/comment/:blogId", middleware.AutoMiddleware(), controller.UploadComment)
 
 	r.POST("/follow/:lid", middleware.AutoMiddleware(), controller.Follow)
 	r.DELETE("/follow/:lid", middleware.AutoMiddleware(), controller.UnFollow)

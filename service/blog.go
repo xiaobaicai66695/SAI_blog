@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/IBM/sarama"
 	"os"
+	"strings"
 )
 
 type BlogInfo struct {
@@ -155,4 +156,9 @@ func packingBlogToBlogInfo(blog *repository.Blog) *BlogInfo {
 		Comment:  comments,
 	}
 	return blogInfo
+}
+
+func UploadComment(blogId int64, uid int64, msg string) {
+	msg = strings.Trim(msg, "")
+	repository.UploadComment(blogId, uid, msg)
 }

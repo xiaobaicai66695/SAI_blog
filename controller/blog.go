@@ -23,6 +23,10 @@ type BlogListResponse struct {
 	Blogs []service.BlogInfo
 }
 
+type CommentData struct {
+	Comment string `json:"comment"`
+}
+
 func UploadBlog(c *gin.Context) {
 	uid, ok := c.Get("uid")
 	if !ok || uid == nil {
@@ -128,5 +132,40 @@ func BlogWithKey(c *gin.Context) {
 			StatusMsg:  "查询成功",
 		},
 		Blogs: blogs,
+	})
+}
+
+func BlogTotalCount(c *gin.Context) {
+	count := repository.BlogTotalCount()
+	c.JSON(http.StatusOK, gin.H{
+		"status_code": 1,
+		"status_msg":  count,
+	})
+}
+
+func UploadComment(c *gin.Context) {
+	uid, ok := c.Get("uid")
+	if !ok {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  "请先登录",
+		})
+		return
+	}
+	blogIdStr := c.Param("blogId")
+	blogId, _ := strconv.ParseInt(blogIdStr, 10, 64)
+	var data CommentData
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  "评论失败",
+		})
+		return
+	}
+
+	service.UploadComment(blogId, uid.(int64), data.Comment)
+	c.JSON(http.StatusOK, Response{
+		StatusCode: 1,
+		StatusMsg:  "评论成功",
 	})
 }
