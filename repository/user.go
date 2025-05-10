@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"sync"
 )
@@ -14,6 +15,7 @@ type User struct {
 	Password string `gorm:"column:password;type:varchar(255)" json:"password"`
 	Follower int64  `gorm:"column:follower" json:"follower"`
 	Followed int64  `gorm:"column:followed" json:"followed"`
+	Email    string `gorm:"column:email;type:varchar(255)" json:"email"`
 }
 
 type UserDao struct{}
@@ -58,4 +60,19 @@ func QueryUserById(id int64) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func QueryAddressByAccount(account string) string {
+	var user User
+	db.Model(&user).Where("account = ?", account).First(&user)
+	return user.Email
+}
+
+func ResetPassword(account string, password string) {
+	hashedPasswordBytes, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hashedPassword := string(hashedPasswordBytes)
+	db.Model(&User{}).Where("account = ?", account).Update("password", hashedPassword)
+}
+func BindEmail(uid int64, email string) {
+	db.Model(&User{}).Where("id = ?", uid).Update("email", email)
 }

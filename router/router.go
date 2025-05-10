@@ -10,7 +10,10 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	userRoutes := r.Group("/user")
 	userRoutes.POST("/register", controller.Register)
 	userRoutes.POST("/login", controller.Login)
-	userRoutes.GET("/:id", controller.UserInfo)
+	userRoutes.POST("/bindmail", middleware.AutoMiddleware(), controller.BindEmail)
+	userRoutes.POST("/reset/sendmail", controller.SendMail)
+	userRoutes.POST("/reset/:account", controller.ResetPassword)
+	userRoutes.GET("/:id", middleware.AutoMiddleware(), controller.UserInfo)
 
 	blogRoutes := r.Group("/blog")
 	blogRoutes.POST("/upload", middleware.AutoMiddleware(), controller.UploadBlog)

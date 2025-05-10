@@ -3,7 +3,9 @@ package repository
 import "gorm.io/gorm"
 
 type Relationship struct {
+	//关注者
 	Uid int64 `gorm:"uid" json:"uid"`
+	//被关注者
 	Fid int64 `gorm:"fid" json:"fid"`
 }
 

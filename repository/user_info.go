@@ -13,13 +13,16 @@ func (UserInfo) TableName() string {
 	return "user"
 }
 
-func QueryUserInfoById(id int64) *UserInfo {
+func QueryUserInfoById(id int64, uid int64) *UserInfo {
 	var user UserInfo
 	db.First(&user, id)
-	err := db.First(&Relationship{Uid: id}).Error
-	if err != nil {
+	var rel Relationship
+	db.Where("uid = ? and fid = ?", uid, id).First(&rel)
+	if uid == 0 || rel.Fid == id {
+		user.IsFollow = true
+	} else {
 		user.IsFollow = false
 	}
-	user.IsFollow = true
+
 	return &user
 }
