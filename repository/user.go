@@ -5,6 +5,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"sync"
+	"time"
 )
 
 type User struct {
@@ -75,4 +76,18 @@ func ResetPassword(account string, password string) {
 }
 func BindEmail(uid int64, email string) {
 	db.Model(&User{}).Where("id = ?", uid).Update("email", email)
+}
+
+func SaveResetTokenToRedis(token string, account string) {
+	key := fmt.Sprintf("reset:%s", account)
+	rdb4.Set(ctx, key, token, time.Minute*15)
+}
+
+func QueryResetToken(account string, token string) bool {
+	key := fmt.Sprintf("reset:%s", account)
+	exToken, _ := rdb4.Get(ctx, key).Result()
+	if exToken == token {
+		return true
+	}
+	return false
 }

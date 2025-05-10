@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"SAI_blog/common"
 	"SAI_blog/middleware"
 	"SAI_blog/repository"
 	"SAI_blog/service"
@@ -89,12 +90,22 @@ func UserInfo(c *gin.Context) {
 
 func ResetPassword(c *gin.Context) {
 	account := c.Param("account")
+	token := c.Query("token")
+	ok := repository.QueryResetToken(account, token)
+	if !ok {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  "token错误或过期失效",
+		})
+		return
+	}
 	err := c.ShouldBindJSON(&user)
 	if err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 0,
 			StatusMsg:  "修改失败",
 		})
+		return
 	}
 	repository.ResetPassword(account, user.Password)
 	c.JSON(200, Response{
@@ -106,17 +117,19 @@ func ResetPassword(c *gin.Context) {
 func SendMail(c *gin.Context) {
 	_ = c.ShouldBindJSON(&user)
 	emailAddress := repository.QueryAddressByAccount(user.Account)
-	if emailAddress != user.Email {
-		c.JSON(http.StatusOK, Response{
-			StatusCode: 0,
-			StatusMsg:  "邮箱或账号错误",
-		})
-		return
-	}
+	//if emailAddress != user.Email {
+	//	c.JSON(http.StatusOK, Response{
+	//		StatusCode: 0,
+	//		StatusMsg:  "邮箱或账号错误",
+	//	})
+	//	return
+	//}
 	from := "575121043@qq.com"
 	password := "wbohjifkququbebd"
 	to := []string{emailAddress}
 
+	token := common.GenerateUUID()
+	repository.SaveResetTokenToRedis(token, user.Account)
 	stmpHost := "smtp.qq.com"
 	stmpPort := "587"
 
@@ -126,7 +139,7 @@ func SendMail(c *gin.Context) {
 		"Content-Type: text/plain; charset=UTF-8\r\n" +
 		"\r\n" +
 		//后续需要改的地方
-		"点击这里重置密码: https://localhost:8081/reset/" + user.Account + "\r\n")
+		"点击这里重置密码: https://localhost:8081/reset/" + user.Account + "?token=" + token + "\r\n")
 
 	auth := smtp.PlainAuth("", from, password, stmpHost)
 	err := smtp.SendMail(stmpHost+":"+stmpPort, auth, from, to, message)

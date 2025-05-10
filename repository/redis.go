@@ -11,6 +11,7 @@ import (
 var rdb1 *redis.Client //操作blog相关数据
 var rdb2 *redis.Client //操作like相关数据
 var rdb3 *redis.Client //记录聊天信息
+var rdb4 *redis.Client //存储token
 
 func InitRedis() error {
 	rdb1 = redis.NewClient(&redis.Options{
@@ -27,6 +28,11 @@ func InitRedis() error {
 		Addr:     "127.0.0.1:6379",
 		Password: "210618",
 		DB:       3,
+	})
+	rdb4 = redis.NewClient(&redis.Options{
+		Addr:     "127.0.0.1:6379",
+		Password: "210618",
+		DB:       4,
 	})
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
