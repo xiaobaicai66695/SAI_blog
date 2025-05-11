@@ -1,0 +1,15 @@
+database:
+    user: root
+    password: 210618
+    host: 127.0.0.1
+    port: 3306
+    name: sai_blog
+    charset: utf8
+    parse_time: true
+    loc: Local
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: "210618"  # 如果没有密码，可以留空
+  db: 0         # 使用的数据库索引

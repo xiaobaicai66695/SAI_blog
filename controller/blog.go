@@ -169,3 +169,16 @@ func UploadComment(c *gin.Context) {
 		StatusMsg:  "评论成功",
 	})
 }
+
+func BlogOfUser(c *gin.Context) {
+	idStr := c.Param("id")
+	id, _ := strconv.ParseInt(idStr, 10, 64)
+	blogInfos := service.QueryBlogByUserId(id)
+	c.JSON(http.StatusOK, BlogListResponse{
+		Response: Response{
+			StatusCode: 1,
+			StatusMsg:  "请求成功",
+		},
+		Blogs: *blogInfos,
+	})
+}

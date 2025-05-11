@@ -15,6 +15,7 @@ type BlogInfo struct {
 	BlogId   int64                    `gorm:"column:blog_id;primary_key" json:"blog_id"`
 	UID      int64                    `gorm:"column:uid" json:"uid"`
 	UserName string                   `gorm:"column:user_name" json:"user_name"`
+	UserIcon string                   `gorm:"column:user_icon" json:"user_icon"`
 	Title    string                   `gorm:"column:title" json:"title"`
 	Content  string                   `gorm:"column:content;type:longtext" json:"content"`
 	Likes    int64                    `gorm:"column:likes" json:"likes"`
@@ -149,6 +150,7 @@ func packingBlogToBlogInfo(blog *repository.Blog) *BlogInfo {
 		BlogId:   blog.BlogId,
 		UID:      blog.UID,
 		UserName: userName,
+		UserIcon: user.IcoUrl,
 		Title:    blog.Title,
 		Content:  blog.Content,
 		Comments: blog.Comments,
@@ -161,4 +163,14 @@ func packingBlogToBlogInfo(blog *repository.Blog) *BlogInfo {
 func UploadComment(blogId int64, uid int64, msg string) {
 	msg = strings.Trim(msg, "")
 	repository.UploadComment(blogId, uid, msg)
+}
+
+func QueryBlogByUserId(id int64) *[]BlogInfo {
+	blogs := repository.QueryBlogByUserId(id)
+	var blogInfos []BlogInfo
+	for _, blog := range *blogs {
+		blogInfo := packingBlogToBlogInfo(&blog)
+		blogInfos = append(blogInfos, *blogInfo)
+	}
+	return &blogInfos
 }

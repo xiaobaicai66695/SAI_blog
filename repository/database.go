@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -9,7 +10,17 @@ var db *gorm.DB
 
 func InitDB() error {
 	var err error
-	dsn := "root:210618@tcp(127.0.0.1:3306)/sai_blog?charset=utf8&parseTime=True&loc=Local"
+	config, err = LoadConfig()
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=%v&loc=%s",
+		config.Database.User,
+		config.Database.Password,
+		config.Database.Host,
+		config.Database.Port,
+		config.Database.Name,
+		config.Database.Charset,
+		config.Database.ParseTime,
+		config.Database.Loc)
 	if db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{}); err != nil {
 		return err
 	}

@@ -142,7 +142,7 @@ func QueryBlogById(blogId int64) *Blog {
 		}
 	}
 
-	db.Find(&blog, "blog_id = ?", blogId)
+	db.Where("blog_id = ?", blogId).First(&blog)
 	if blog.BlogId == 0 {
 		rdb1.Set(ctx, key, "", time.Hour*10)
 		return nil
@@ -168,6 +168,12 @@ func BlogTotalCount() int64 {
 	var count int64
 	db.Model(&Blog{}).Count(&count)
 	return count
+}
+
+func QueryBlogByUserId(id int64) *[]Blog {
+	var blogs []Blog
+	db.Where("uid = ?", id).Find(&blogs)
+	return &blogs
 }
 
 //	func SaveBlogFromKafka() error {
