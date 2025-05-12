@@ -13,6 +13,7 @@ type LoginFlow struct {
 type UserVO struct {
 	ID      int64  `gorm:"primary_key" json:"ID"`
 	Name    string `gorm:"column:name" json:"name"`
+	IcoUrl  string `json:"ico_url"`
 	Account string `gorm:"column:account" json:"account"`
 }
 
@@ -47,6 +48,7 @@ func (f *LoginFlow) userLogin() (*UserVO, error) {
 	userVO := &UserVO{
 		ID:      user.Id,
 		Name:    user.Name,
+		IcoUrl:  user.IcoUrl,
 		Account: user.Account,
 	}
 	return userVO, nil

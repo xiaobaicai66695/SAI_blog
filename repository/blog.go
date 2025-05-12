@@ -15,12 +15,13 @@ import (
 const keyPrefix = "blog:"
 
 var ctx = context.Background()
+
 var blog = &Blog{}
 
 const blogUploadTopic = "blog"
 
 type Blog struct {
-	BlogId   int64  `gorm:"column:blog_id;primary_key;autoIncrement" json:"blog_id"`
+	BlogId   int64  `gorm:"column:blog_id;primary_key" json:"blog_id"`
 	UID      int64  `gorm:"column:uid" json:"uid"`
 	Title    string `gorm:"column:title" json:"title"`
 	Content  string `gorm:"column:content;type:longtext" json:"content"`
@@ -49,6 +50,7 @@ func (BlogConsumerGroupHandler) Cleanup(sess sarama.ConsumerGroupSession) error 
 // 上传博客时消费者逻辑
 func (BlogConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {
+		var blog *Blog
 		fmt.Print("收到消息了\n")
 		json.Unmarshal(msg.Value, &blog)
 		db.Save(blog)
@@ -84,6 +86,7 @@ func (PushToFollower) Cleanup(sess sarama.ConsumerGroupSession) error { return n
 // 具体推送逻辑
 func (PushToFollower) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {
+		var blog *Blog
 		fmt.Printf("准备推送消息了\n")
 		json.Unmarshal(msg.Value, &blog)
 		var uid = blog.UID
@@ -131,6 +134,7 @@ func ConsumeBlogFromKafka(groupID string, topic string, handler sarama.ConsumerG
 }
 
 func QueryBlogById(blogId int64) *Blog {
+	var blog *Blog
 	key := fmt.Sprintf("%s%d", keyPrefix, blogId)
 	val, err := rdb1.Get(ctx, key).Result()
 	if err == nil {
@@ -142,7 +146,7 @@ func QueryBlogById(blogId int64) *Blog {
 		}
 	}
 
-	db.Where("blog_id = ?", blogId).First(&blog)
+	db.Debug().Where("blog_id = ?", blogId).First(&blog)
 	if blog.BlogId == 0 {
 		rdb1.Set(ctx, key, "", time.Hour*10)
 		return nil

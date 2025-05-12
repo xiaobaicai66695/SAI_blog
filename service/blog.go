@@ -11,16 +11,20 @@ import (
 	"strings"
 )
 
+type CommentsInfo struct {
+	Comment repository.BlogComment `json:"comment"`
+	UserVO  *UserVO                `json:"user"`
+}
 type BlogInfo struct {
-	BlogId   int64                    `gorm:"column:blog_id;primary_key" json:"blog_id"`
-	UID      int64                    `gorm:"column:uid" json:"uid"`
-	UserName string                   `gorm:"column:user_name" json:"user_name"`
-	UserIcon string                   `gorm:"column:user_icon" json:"user_icon"`
-	Title    string                   `gorm:"column:title" json:"title"`
-	Content  string                   `gorm:"column:content;type:longtext" json:"content"`
-	Likes    int64                    `gorm:"column:likes" json:"likes"`
-	Comments int64                    `gorm:"column:comments" json:"comments"`
-	Comment  []repository.BlogComment `gorm:"-" json:"comment"`
+	BlogId      int64          `gorm:"column:blog_id;primary_key" json:"blog_id"`
+	UID         int64          `gorm:"column:uid" json:"uid"`
+	UserName    string         `gorm:"column:user_name" json:"user_name"`
+	UserIcon    string         `gorm:"column:user_icon" json:"user_icon"`
+	Title       string         `gorm:"column:title" json:"title"`
+	Content     string         `gorm:"column:content;type:longtext" json:"content"`
+	Likes       int64          `gorm:"column:likes" json:"likes"`
+	Comments    int64          `gorm:"column:comments" json:"comments"`
+	CommentInfo []CommentsInfo `gorm:"-" json:"comment"`
 }
 
 // 用消息队列要发送的消息
@@ -145,17 +149,31 @@ func QueryBlogListWithKey(key string, page int) []BlogInfo {
 func packingBlogToBlogInfo(blog *repository.Blog) *BlogInfo {
 	comments := repository.QueryCommentsById(blog.BlogId)
 	user, _ := repository.QueryUserById(blog.UID)
+	var commentInfos []CommentsInfo
+	for _, comment := range comments {
+		commentUser, _ := repository.QueryUserById(comment.Cid)
+		commentInfo := CommentsInfo{
+			Comment: comment,
+			UserVO: &UserVO{
+				ID:      commentUser.Id,
+				Name:    commentUser.Name,
+				IcoUrl:  commentUser.IcoUrl,
+				Account: commentUser.Account,
+			},
+		}
+		commentInfos = append(commentInfos, commentInfo)
+	}
 	userName := user.Name
 	blogInfo := &BlogInfo{
-		BlogId:   blog.BlogId,
-		UID:      blog.UID,
-		UserName: userName,
-		UserIcon: user.IcoUrl,
-		Title:    blog.Title,
-		Content:  blog.Content,
-		Comments: blog.Comments,
-		Likes:    blog.Likes,
-		Comment:  comments,
+		BlogId:      blog.BlogId,
+		UID:         blog.UID,
+		UserName:    userName,
+		UserIcon:    user.IcoUrl,
+		Title:       blog.Title,
+		Content:     blog.Content,
+		Comments:    blog.Comments,
+		Likes:       blog.Likes,
+		CommentInfo: commentInfos,
 	}
 	return blogInfo
 }
