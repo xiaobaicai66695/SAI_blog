@@ -146,7 +146,7 @@ func QueryBlogById(blogId int64) *Blog {
 		}
 	}
 
-	db.Debug().Where("blog_id = ?", blogId).First(&blog)
+	db.Where("blog_id = ?", blogId).First(&blog)
 	if blog.BlogId == 0 {
 		rdb1.Set(ctx, key, "", time.Hour*10)
 		return nil

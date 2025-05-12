@@ -12,7 +12,7 @@ import (
 )
 
 type CommentsInfo struct {
-	Comment repository.BlogComment `json:"comment"`
+	Comment repository.BlogComment `json:"Comment"`
 	UserVO  *UserVO                `json:"user"`
 }
 type BlogInfo struct {
@@ -24,7 +24,7 @@ type BlogInfo struct {
 	Content     string         `gorm:"column:content;type:longtext" json:"content"`
 	Likes       int64          `gorm:"column:likes" json:"likes"`
 	Comments    int64          `gorm:"column:comments" json:"comments"`
-	CommentInfo []CommentsInfo `gorm:"-" json:"comment"`
+	CommentInfo []CommentsInfo `gorm:"-" json:"comment_info"`
 }
 
 // 用消息队列要发送的消息
@@ -165,13 +165,14 @@ func packingBlogToBlogInfo(blog *repository.Blog) *BlogInfo {
 	}
 	userName := user.Name
 	blogInfo := &BlogInfo{
-		BlogId:      blog.BlogId,
-		UID:         blog.UID,
-		UserName:    userName,
-		UserIcon:    user.IcoUrl,
-		Title:       blog.Title,
-		Content:     blog.Content,
-		Comments:    blog.Comments,
+		BlogId:   blog.BlogId,
+		UID:      blog.UID,
+		UserName: userName,
+		UserIcon: user.IcoUrl,
+		Title:    blog.Title,
+		Content:  blog.Content,
+		Comments: blog.Comments,
+		//Comments:    int64(len(commentInfos)),
 		Likes:       blog.Likes,
 		CommentInfo: commentInfos,
 	}

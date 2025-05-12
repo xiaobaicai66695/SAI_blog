@@ -32,11 +32,7 @@ func BlogIsLike(blogId int64, lid int64) bool {
 	}
 	return false
 }
-func likeCountFunc(blogId int64) {
-	keyCount := fmt.Sprintf("blog:likes:count:%d", blogId)
-	db.Model(&Blog{}).Where("blog_id = ?", blogId).Find(&blog)
-	rdb2.Set(ctx, keyCount, blog.Likes, -1)
-}
+
 func Like(blogId int64, lid int64) {
 	key := fmt.Sprintf("blog:like:%d", blogId)
 	rdb2.SAdd(ctx, key, lid)
