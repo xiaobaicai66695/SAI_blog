@@ -17,6 +17,7 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	userRoutes.POST("ico-update", middleware.AutoMiddleware(), controller.UpdateIco)
 
 	blogRoutes := r.Group("/blog")
+	blogRoutes.POST("/content-images-load", middleware.AutoMiddleware(), controller.BlogContentImagesUpload)
 	blogRoutes.POST("/upload", middleware.AutoMiddleware(), controller.UploadBlog)
 	blogRoutes.GET("/:blogID", controller.BlogInfo)
 	blogRoutes.GET("/list/follow", middleware.AutoMiddleware(), controller.FollowBlogList)

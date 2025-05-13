@@ -7,8 +7,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/IBM/sarama"
+	"mime/multipart"
 	"os"
+	"path"
 	"strings"
+	"time"
 )
 
 type CommentsInfo struct {
@@ -192,4 +195,22 @@ func QueryBlogByUserId(id int64) *[]BlogInfo {
 		blogInfos = append(blogInfos, *blogInfo)
 	}
 	return &blogInfos
+}
+
+func BlogContentImagesUpload(uid int64, file *multipart.FileHeader) (string, error) {
+	ext := path.Ext(file.Filename)
+	if !(ext == "" || ext == ".png" || ext == ".jpg" || ext == ".gif" || ext == ".jpeg") {
+		return "", fmt.Errorf("格式错误")
+	}
+	filePath := fmt.Sprintf("./static/blog_images/%s%d%s", time.Now().Format("20060102150405"), uid, ext)
+	errChan := make(chan error)
+	go func() {
+		errChan <- SaveImages(file, filePath)
+	}()
+	err := <-errChan
+	if err != nil {
+		return "", fmt.Errorf("保存失败")
+	}
+	filePath = strings.TrimPrefix(filePath, ".")
+	return filePath, nil
 }

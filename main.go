@@ -3,10 +3,14 @@ package main
 import (
 	"SAI_blog/repository"
 	"SAI_blog/router"
+	"embed"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"time"
 )
+
+//go:embed static/*
+var content embed.FS
 
 func main() {
 	if err := repository.InitDB(); err != nil {

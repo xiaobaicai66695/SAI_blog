@@ -182,3 +182,27 @@ func BlogOfUser(c *gin.Context) {
 		Blogs: *blogInfos,
 	})
 }
+
+func BlogContentImagesUpload(c *gin.Context) {
+	uid, ok := c.Get("uid")
+	if !ok {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  "请先登录",
+		})
+		return
+	}
+	file, err := c.FormFile("file")
+	url, err := service.BlogContentImagesUpload(uid.(int64), file)
+	if err != nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0,
+			StatusMsg:  err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, Response{
+		StatusCode: 1,
+		StatusMsg:  url,
+	})
+}

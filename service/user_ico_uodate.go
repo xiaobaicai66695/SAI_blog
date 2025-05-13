@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func UpdateIco(uid int64, file *multipart.FileHeader) error {
@@ -22,7 +23,8 @@ func UpdateIco(uid int64, file *multipart.FileHeader) error {
 	go func() {
 		errChan <- SaveImages(file, filePath)
 	}()
-	repository.UpdateUserIco(uid, filePath)
+	newFilePath := strings.TrimPrefix(filePath, ".")
+	repository.UpdateUserIco(uid, newFilePath)
 	err := <-errChan
 	return err
 }
