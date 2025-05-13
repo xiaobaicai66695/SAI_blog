@@ -14,6 +14,7 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	userRoutes.POST("/reset/sendmail", controller.SendMail)
 	userRoutes.POST("/reset/:account", controller.ResetPassword)
 	userRoutes.GET("/:id", middleware.AutoMiddleware(), controller.UserInfo)
+	userRoutes.POST("ico-update", middleware.AutoMiddleware(), controller.UpdateIco)
 
 	blogRoutes := r.Group("/blog")
 	blogRoutes.POST("/upload", middleware.AutoMiddleware(), controller.UploadBlog)

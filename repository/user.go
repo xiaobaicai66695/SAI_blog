@@ -91,3 +91,6 @@ func QueryResetToken(account string, token string) bool {
 	}
 	return false
 }
+func UpdateUserIco(uid int64, icoUrl string) {
+	db.Model(&User{}).Where("id = ?", uid).Update("ico_url", icoUrl)
+}

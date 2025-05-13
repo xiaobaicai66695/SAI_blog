@@ -37,5 +37,6 @@ func main() {
 	}()
 	r := gin.Default()
 	r = router.InitRouter(r)
+	r.Static("/static", "./static")
 	panic(r.Run(":8081"))
 }
