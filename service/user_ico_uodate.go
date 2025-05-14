@@ -16,6 +16,7 @@ func UpdateIco(uid int64, file *multipart.FileHeader) error {
 		return fmt.Errorf("格式错误")
 	}
 	filePath := fmt.Sprintf("./static/user_ico/%d%s", uid, ext)
+	//filePath := fmt.Sprintf("/root/project/SAI_blog/static/user_ico/%d%s", uid, ext)
 	if _, err := os.Stat(filePath); err == nil {
 		os.Remove(filePath)
 	}

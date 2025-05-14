@@ -16,6 +16,7 @@ type UploadBlogResponse struct {
 type BlogInfoResponse struct {
 	Response
 	*service.BlogInfo
+	is_liked bool
 }
 
 type BlogListResponse struct {
@@ -66,12 +67,16 @@ func UploadBlog(c *gin.Context) {
 }
 
 func BlogInfo(c *gin.Context) {
+	uid, ok := c.Get("uid")
+	if !ok {
+		uid = int64(0)
+	}
 	blogIdStr := c.Param("blogID")
 	blogId, err := strconv.ParseInt(blogIdStr, 10, 64)
 	if err != nil {
 		return
 	}
-	blogInfo := service.BlogInfoById(blogId)
+	blogInfo, isLiked := service.BlogInfoById(blogId, uid.(int64))
 	if blogInfo == nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 0,
@@ -85,6 +90,7 @@ func BlogInfo(c *gin.Context) {
 			StatusMsg:  "查询成功",
 		},
 		BlogInfo: blogInfo,
+		is_liked: isLiked,
 	})
 }
 

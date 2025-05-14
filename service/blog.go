@@ -103,16 +103,17 @@ func UploadBlog(blog *repository.Blog) error {
 	//}
 	return nil
 }
-func BlogInfoById(blogId int64) *BlogInfo {
+func BlogInfoById(blogId int64, uid int64) (*BlogInfo, bool) {
 	if blogId == 0 {
-		return nil
+		return nil, false
 	}
 	blog := repository.QueryBlogById(blogId)
+	isLiked := repository.BlogIsLike(blogId, uid)
 	if blog == nil {
-		return nil
+		return nil, false
 	}
 	blogInfo := packingBlogToBlogInfo(blog)
-	return blogInfo
+	return blogInfo, isLiked
 }
 
 func QueryFollowBlogList(uid int64, page int) []BlogInfo {

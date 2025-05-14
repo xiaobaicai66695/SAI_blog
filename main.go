@@ -3,16 +3,29 @@ package main
 import (
 	"SAI_blog/repository"
 	"SAI_blog/router"
-	"embed"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"os"
 	"time"
 )
 
-//go:embed static/*
-var content embed.FS
-
 func main() {
+	staticDir := "./static"
+	blogImagesDir := "./static/blog_images"
+	userIcoDir := "./static/user_ico"
+	if err := os.MkdirAll(staticDir, os.ModePerm); err != nil {
+		fmt.Println("Failed to create static directory:", err)
+		return
+	}
+	if err := os.MkdirAll(blogImagesDir, os.ModePerm); err != nil {
+		fmt.Println("Failed to create blog_images directory:", err)
+		return
+	}
+	if err := os.MkdirAll(userIcoDir, os.ModePerm); err != nil {
+		fmt.Println("Failed to create user_ico directory:", err)
+		return
+	}
 	if err := repository.InitDB(); err != nil {
 		panic(err)
 	}
