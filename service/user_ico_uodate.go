@@ -10,10 +10,10 @@ import (
 	"strings"
 )
 
-func UpdateIco(uid int64, file *multipart.FileHeader) error {
+func UpdateIco(uid int64, file *multipart.FileHeader) (string, error) {
 	ext := filepath.Ext(file.Filename)
 	if !(ext == "" || ext == ".jpg" || ext == ".png" || ext == ".jpeg") {
-		return fmt.Errorf("格式错误")
+		return "", fmt.Errorf("格式错误")
 	}
 	filePath := fmt.Sprintf("./static/user_ico/%d%s", uid, ext)
 	//filePath := fmt.Sprintf("/root/project/SAI_blog/static/user_ico/%d%s", uid, ext)
@@ -27,7 +27,7 @@ func UpdateIco(uid int64, file *multipart.FileHeader) error {
 	newFilePath := strings.TrimPrefix(filePath, ".")
 	repository.UpdateUserIco(uid, newFilePath)
 	err := <-errChan
-	return err
+	return newFilePath, err
 }
 
 func SaveImages(file *multipart.FileHeader, filePath string) error {

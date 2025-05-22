@@ -89,7 +89,7 @@ func UserInfo(c *gin.Context) {
 }
 
 func ResetPassword(c *gin.Context) {
-	account := c.Param("account")
+	account := c.Query("account")
 	token := c.Query("token")
 	ok := repository.QueryResetToken(account, token)
 	if !ok {
@@ -114,7 +114,7 @@ func ResetPassword(c *gin.Context) {
 	})
 }
 
-var ipconfig = "1.95.40.68:8081"
+var ipconfig = "1.95.40.68"
 
 func SendMail(c *gin.Context) {
 	_ = c.ShouldBindJSON(&user)
@@ -141,7 +141,7 @@ func SendMail(c *gin.Context) {
 		"Content-Type: text/plain; charset=UTF-8\r\n" +
 		"\r\n" +
 		//后续需要改的地方
-		"点击这里重置密码: https://" + ipconfig + "/reset/" + user.Account + "?token=" + token + "\r\n")
+		"点击这里重置密码: https://" + ipconfig + "/reset/" + "?token=" + token + "account" + user.Account + "\r\n")
 
 	auth := smtp.PlainAuth("", from, password, stmpHost)
 	err := smtp.SendMail(stmpHost+":"+stmpPort, auth, from, to, message)
@@ -183,13 +183,13 @@ func UpdateIco(c *gin.Context) {
 		return
 	}
 	file, err := c.FormFile("file")
-	err = service.UpdateIco(uid.(int64), file)
+	icoUrl, err := service.UpdateIco(uid.(int64), file)
 	if err != nil {
 		c.JSON(http.StatusOK, Response{0, err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, Response{
 		StatusCode: 1,
-		StatusMsg:  "上传头像成功",
+		StatusMsg:  icoUrl,
 	})
 }
