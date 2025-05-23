@@ -16,7 +16,7 @@ import (
 
 type CommentsInfo struct {
 	Comment repository.BlogComment `json:"Comment"`
-	UserVO  *UserVO                `json:"user"`
+	UserVO  *repository.UserVO     `json:"user"`
 }
 type BlogInfo struct {
 	BlogId      int64          `gorm:"column:blog_id;primary_key" json:"blog_id"`
@@ -41,23 +41,6 @@ const blogUploadTopic = "blog"
 
 // var blog *repository.Blog
 var ctx = context.Background()
-
-type ConsumerGroupHandler struct {
-}
-
-// 消费者
-func (ConsumerGroupHandler) Setup() error {
-	return nil
-}
-
-func (ConsumerGroupHandler) Cleanup() error {
-	return nil
-}
-
-// 上传博客时消费者逻辑
-func (ConsumerGroupHandler) UploadBlogConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	return nil
-}
 
 func sendBlogUploadMessage(msg *repository.Blog) {
 	//初始化生产者
@@ -158,7 +141,7 @@ func packingBlogToBlogInfo(blog *repository.Blog) *BlogInfo {
 		commentUser, _ := repository.QueryUserById(comment.Cid)
 		commentInfo := CommentsInfo{
 			Comment: comment,
-			UserVO: &UserVO{
+			UserVO: &repository.UserVO{
 				ID:      commentUser.Id,
 				Name:    commentUser.Name,
 				IcoUrl:  commentUser.IcoUrl,

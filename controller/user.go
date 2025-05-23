@@ -15,8 +15,8 @@ import (
 
 type UserLoginResponse struct {
 	Response
-	User  *service.UserVO `json:"user"`
-	Token string          `json:"token"`
+	User  *repository.UserVO `json:"user"`
+	Token string             `json:"token"`
 }
 
 type UserInfoResponse struct {
@@ -141,7 +141,7 @@ func SendMail(c *gin.Context) {
 		"Content-Type: text/plain; charset=UTF-8\r\n" +
 		"\r\n" +
 		//后续需要改的地方
-		"点击这里重置密码: https://" + ipconfig + "/reset/" + "?token=" + token + "account" + user.Account + "\r\n")
+		"点击这里重置密码: http://" + ipconfig + "/reset/" + "?token=" + token + "account=" + user.Account + "\r\n")
 
 	auth := smtp.PlainAuth("", from, password, stmpHost)
 	err := smtp.SendMail(stmpHost+":"+stmpPort, auth, from, to, message)

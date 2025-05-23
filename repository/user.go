@@ -19,6 +19,13 @@ type User struct {
 	Email    string `gorm:"column:email;type:varchar(255)" json:"email"`
 }
 
+type UserVO struct {
+	ID      int64  `gorm:"primary_key" json:"ID"`
+	Name    string `gorm:"column:name" json:"name"`
+	IcoUrl  string `json:"ico_url"`
+	Account string `gorm:"column:account" json:"account"`
+}
+
 type UserDao struct{}
 
 var userDao *UserDao

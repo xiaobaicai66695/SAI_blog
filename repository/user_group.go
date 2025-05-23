@@ -15,7 +15,7 @@ type UserGroup struct {
 }
 type Group struct {
 	GroupId   int64  `json:"group_id"`
-	FromUid   int64  `json:"from_uid"`
+	FromUser  UserVO `json:"from_user"`
 	Content   string `json:"content"`
 	Timestamp int64  `json:"timestamp"`
 }

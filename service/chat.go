@@ -109,9 +109,16 @@ func removeConnection(groupId int64, uid int64) {
 }
 
 func packingMsg(message string, groupId int64, uid int64) *repository.Group {
+	user, _ := repository.QueryUserById(uid)
+	userVO := repository.UserVO{
+		ID:      user.Id,
+		Name:    user.Name,
+		IcoUrl:  user.IcoUrl,
+		Account: user.Account,
+	}
 	msg := &repository.Group{
 		GroupId:   groupId,
-		FromUid:   uid,
+		FromUser:  userVO,
 		Content:   message,
 		Timestamp: time.Now().Unix(),
 	}
